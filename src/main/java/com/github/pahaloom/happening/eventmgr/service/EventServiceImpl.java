@@ -5,6 +5,7 @@ import com.github.pahaloom.happening.eventmgr.model.dao.ParticipantJuridicalRepo
 import com.github.pahaloom.happening.eventmgr.model.dao.ParticipantPhysicalRepository;
 import com.github.pahaloom.happening.eventmgr.model.dao.PaymentMethodRepository;
 import com.github.pahaloom.happening.eventmgr.model.en.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class EventServiceImpl implements EventService {
     @Autowired
     PaymentMethodRepository paymentMethodRepository;
 
+    @Transactional
     @Override
     public List<EventResponse> getEvents() {
         var it = eventRepository.findAll().iterator();
@@ -47,6 +49,7 @@ public class EventServiceImpl implements EventService {
                 .toList();
     }
 
+    @Transactional
     @Override
     public UUID createEvent(EventCreationRequest event) {
         var en = new EventEntity()
@@ -58,6 +61,7 @@ public class EventServiceImpl implements EventService {
         return en.getId();
     }
 
+    @Transactional
     @Override
     public boolean addParticipant(UUID eventId, ParticipantType participantType, UUID participantId) {
         var eventEntity = getEventEntity(eventId);
@@ -82,6 +86,7 @@ public class EventServiceImpl implements EventService {
         return retVal;
     }
 
+    @Transactional
     @Override
     public UUID addParticipant(UUID eventId, NewParticipantRequest participant) {
         var eventEntity = getEventEntity(eventId);

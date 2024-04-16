@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 import java.util.Set;
 import java.util.UUID;
 
-@MappedSuperclass
+@Entity
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -20,6 +20,7 @@ public abstract class ParticipantEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @ManyToOne
     private PaymentMethodEntity paymentMethod;
 
     @ManyToMany
