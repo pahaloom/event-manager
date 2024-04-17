@@ -3,6 +3,8 @@ package com.github.pahaloom.happening.eventmgr.service;
 import com.github.pahaloom.happening.eventmgr.model.dao.PaymentMethodRepository;
 import com.github.pahaloom.happening.eventmgr.model.en.PaymentMethodEntity;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import java.util.List;
 
 @Service
 public class PaymentTypeServiceImpl implements PaymentTypeService {
+    private static final Logger LOG = LoggerFactory.getLogger(PaymentTypeServiceImpl.class);
 
     @Autowired
     private PaymentMethodRepository paymentMethodRepository;
@@ -31,14 +34,19 @@ public class PaymentTypeServiceImpl implements PaymentTypeService {
     @Transactional
     @Override
     public void addPaymentType(PaymentType paymentType) {
-        paymentMethodRepository.save(new PaymentMethodEntity()
+        var paymentMethodEntity = new PaymentMethodEntity()
                 .setCode(paymentType.getCode())
-                .setName(paymentType.getName()));
+                .setName(paymentType.getName());
+        LOG.info("Adding {}", paymentMethodEntity);
+        paymentMethodRepository.save(paymentMethodEntity);
     }
 
     @Override
     public void removePaymentType(String code) {
         var pme = paymentMethodRepository.findById(code);
-        pme.ifPresent(paymentMethodEntity -> paymentMethodRepository.delete(paymentMethodEntity));
+        pme.ifPresent(paymentMethodEntity -> {
+            LOG.info("Removing {}", paymentMethodEntity);
+            paymentMethodRepository.delete(paymentMethodEntity);
+        });
     }
 }
