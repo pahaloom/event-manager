@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -35,18 +36,22 @@ public class EventServiceImpl implements EventService {
         var retVal = new ArrayList<EventResponse>();
         while (it.hasNext()) {
             var ee = it.next();
-            retVal.add(new EventResponse()
-                    .setId(ee.getId())
-                    .setName(ee.getName())
-                    .setTime(ee.getTime())
-                    .setPlace(ee.getPlace())
-                    .setSize(ee.getParticipants().stream()
-                            .mapToInt(ParticipantEntity::getCount)
-                            .sum()));
+            retVal.add(mapEventEntityToResponse(ee));
         }
         return retVal.stream()
                 .sorted((e1, e2) -> Math.toIntExact(e1.getTime().compareTo(e2.getTime())))
                 .toList();
+    }
+
+    @Transactional
+    @Override
+    public EventResponse getEvent(UUID eventId) {
+        var eventResponse = eventRepository.findById(eventId)
+                .map(EventServiceImpl::mapEventEntityToResponse);
+        if (eventResponse.isEmpty()) {
+            throw new IllegalArgumentException("Event not found: " + eventId);
+        }
+        return eventResponse.get();
     }
 
     @Transactional
@@ -107,6 +112,7 @@ public class EventServiceImpl implements EventService {
                 var p = new ParticipantJuridicalEntity()
                         .setJuridicalName(participant.getName())
                         .setRegCode(participant.getCode())
+                        .setParticipants(participant.getCount())
                         .setInfo(participant.getInfo());
                 p.setPaymentMethod(method);
                 participantJuridicalRepository.save(p);
@@ -115,6 +121,17 @@ public class EventServiceImpl implements EventService {
             }
         }
         throw new IllegalArgumentException("Unknown participant type: " + participant.getType());
+    }
+
+    private static EventResponse mapEventEntityToResponse(EventEntity ee) {
+        return new EventResponse()
+                .setId(ee.getId())
+                .setName(ee.getName())
+                .setTime(ee.getTime())
+                .setPlace(ee.getPlace())
+                .setSize(ee.getParticipants().stream()
+                        .mapToInt(ParticipantEntity::getCount)
+                        .sum());
     }
 
     private PaymentMethodEntity getPaymentMethodEntity(String paymentType) {

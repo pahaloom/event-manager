@@ -19,6 +19,8 @@ public class NewParticipantRequest {
 
     private String lastName;
 
+    private int count = 1;
+
     private String code;
 
     private String paymentTYpe;

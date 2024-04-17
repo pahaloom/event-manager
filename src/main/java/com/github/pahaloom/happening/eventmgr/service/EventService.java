@@ -7,6 +7,8 @@ public interface EventService {
 
     List<EventResponse> getEvents();
 
+    EventResponse getEvent(UUID eventId);
+
     UUID createEvent(EventCreationRequest event);
 
     boolean addParticipant(UUID eventId, ParticipantType type, UUID participantId);
