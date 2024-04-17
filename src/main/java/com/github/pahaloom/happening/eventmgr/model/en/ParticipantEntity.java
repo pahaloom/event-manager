@@ -21,9 +21,10 @@ public abstract class ParticipantEntity {
     private UUID id;
 
     @ManyToOne
+    @JoinColumn(foreignKey = @ForeignKey(name = "FK_PRTCPNT_PYMNTMTHD"))
     private PaymentMethodEntity paymentMethod;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "participants")
     private Set<EventEntity> events;
 
 

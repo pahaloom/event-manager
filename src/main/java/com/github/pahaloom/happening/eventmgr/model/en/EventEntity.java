@@ -34,7 +34,9 @@ public class EventEntity {
 
     @ManyToMany
     @JoinTable(name = "event_participants",
-            joinColumns = @JoinColumn(name = "participant_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id"))
+            joinColumns = @JoinColumn(name = "participant_id",
+                    foreignKey = @ForeignKey(name = "FK_EVNTPRT_PRTID")),
+            inverseJoinColumns = @JoinColumn(name = "event_id",
+                    foreignKey = @ForeignKey(name = "FK_EVNTPRT_EVNTID")))
     private Set<ParticipantEntity> participants;
 }
