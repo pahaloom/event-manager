@@ -9,9 +9,7 @@ public interface EventService {
 
     EventResponse getEvent(UUID eventId);
 
-    UUID createEvent(EventCreationRequest event);
+    UUID createEvent(EventRequest event);
 
-    boolean addParticipant(UUID eventId, ParticipantType type, UUID participantId);
-
-    UUID addParticipant(UUID eventId, NewParticipantRequest participant);
+    void updateEvent(EventRequest event, UUID eventId);
 }

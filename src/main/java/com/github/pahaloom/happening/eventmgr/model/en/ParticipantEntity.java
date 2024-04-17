@@ -1,5 +1,6 @@
 package com.github.pahaloom.happening.eventmgr.model.en;
 
+import com.github.pahaloom.happening.eventmgr.service.ParticipantType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,4 +36,6 @@ public abstract class ParticipantEntity {
     public abstract String getExtraInfo();
 
     public abstract int getCount();
+
+    public abstract ParticipantType getType();
 }

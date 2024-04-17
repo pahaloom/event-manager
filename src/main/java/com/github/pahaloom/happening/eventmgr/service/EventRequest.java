@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 @Setter
 @Accessors(chain = true)
 @ToString
-public class EventCreationRequest {
+public class EventRequest {
 
     private String name;
 

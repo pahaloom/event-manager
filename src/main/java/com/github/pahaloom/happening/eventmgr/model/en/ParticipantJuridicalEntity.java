@@ -1,5 +1,6 @@
 package com.github.pahaloom.happening.eventmgr.model.en;
 
+import com.github.pahaloom.happening.eventmgr.service.ParticipantType;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -43,5 +44,10 @@ public class ParticipantJuridicalEntity extends ParticipantEntity {
     @Override
     public int getCount() {
         return participants;
+    }
+
+    @Override
+    public ParticipantType getType() {
+        return ParticipantType.LEGAL;
     }
 }

@@ -1,5 +1,6 @@
 package com.github.pahaloom.happening.eventmgr.model.en;
 
+import com.github.pahaloom.happening.eventmgr.service.ParticipantType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
@@ -50,5 +51,10 @@ public class ParticipantPhysicalEntity extends ParticipantEntity {
     @Override
     public int getCount() {
         return 1;
+    }
+
+    @Override
+    public ParticipantType getType() {
+        return ParticipantType.PHYSICAL;
     }
 }
