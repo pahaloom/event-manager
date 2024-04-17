@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @ToString
 public class ParticipantPhysicalEntity extends ParticipantEntity {
 
