@@ -1,9 +1,6 @@
 package com.github.pahaloom.happening.eventmgr.controller;
 
-import com.github.pahaloom.happening.eventmgr.service.EventParticipant;
-import com.github.pahaloom.happening.eventmgr.service.NewParticipantRequest;
-import com.github.pahaloom.happening.eventmgr.service.ParticipantService;
-import com.github.pahaloom.happening.eventmgr.service.ParticipantType;
+import com.github.pahaloom.happening.eventmgr.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +24,13 @@ public class ParticipantController {
         return participantService.addParticipant(eventId, request);
     }
 
-    @PutMapping("event/{eventId}/participants/{type}/{participantId}")
+    @PutMapping("event/{eventId}/participant/{type}/{participantId}")
     public boolean addParticipant(@PathVariable UUID eventId, @PathVariable ParticipantType type, @PathVariable UUID participantId) {
         return participantService.addParticipant(eventId, type, participantId);
+    }
+
+    @GetMapping("participant/{type}/{participantId}")
+    public ParticipantDetails getParticipant(@PathVariable ParticipantType type, @PathVariable UUID participantId) {
+        return participantService.getParticipant(type, participantId);
     }
 }

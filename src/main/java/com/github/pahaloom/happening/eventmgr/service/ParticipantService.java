@@ -10,4 +10,6 @@ public interface ParticipantService {
     boolean addParticipant(UUID eventId, ParticipantType type, UUID participantId);
 
     UUID addParticipant(UUID eventId, NewParticipantRequest participant);
+
+    ParticipantDetails getParticipant(ParticipantType type, UUID participantId);
 }

@@ -80,7 +80,7 @@ public class ParticipationServiceImpl implements ParticipantService {
     public UUID addParticipant(UUID eventId, NewParticipantRequest participant) {
         var eventEntity = getEventEntity(eventId);
         var method = getPaymentMethodEntity(participant.getPaymentType());
-        switch (participant.getType()) {
+        return switch (participant.getType()) {
             case PHYSICAL -> {
                 var p = new ParticipantPhysicalEntity()
                         .setFirstName(participant.getFirstName())
@@ -90,7 +90,7 @@ public class ParticipationServiceImpl implements ParticipantService {
                 p.setPaymentMethod(method);
                 participantPhysicalRepository.save(p);
                 eventEntity.getParticipants().add(p);
-                return p.getId();
+                yield p.getId();
             }
             case LEGAL -> {
                 var p = new ParticipantJuridicalEntity()
@@ -101,10 +101,44 @@ public class ParticipationServiceImpl implements ParticipantService {
                 p.setPaymentMethod(method);
                 participantJuridicalRepository.save(p);
                 eventEntity.getParticipants().add(p);
-                return p.getId();
+                yield p.getId();
             }
-        }
-        throw new IllegalArgumentException("Unknown participant type: " + participant.getType());
+        };
+    }
+
+    @Override
+    public ParticipantDetails getParticipant(ParticipantType type, UUID participantId) {
+        return switch (type) {
+            case PHYSICAL -> {
+                var participantPhysical = participantPhysicalRepository.findById(participantId);
+                if (participantPhysical.isEmpty()) {
+                    throw new IllegalArgumentException("Physical participant not found: " + participantId);
+                }
+                var p = participantPhysical.get();
+                yield new ParticipantDetails()
+                        .setId(p.getId())
+                        .setFirstName(p.getFirstName())
+                        .setLastName(p.getLastName())
+                        .setName(p.getName())
+                        .setCode(p.getPersonalCode())
+                        .setPaymentType(p.getPaymentMethod() != null ? p.getPaymentMethod().getCode() : null)
+                        .setInfo(p.getInfo());
+            }
+            case LEGAL -> {
+                var participantJuridical = participantJuridicalRepository.findById(participantId);
+                if (participantJuridical.isEmpty()) {
+                    throw new IllegalArgumentException("Juridical participant not found: " + participantId);
+                }
+                var p = participantJuridical.get();
+                yield  new ParticipantDetails()
+                        .setId(p.getId())
+                        .setLegalName(p.getJuridicalName())
+                        .setName(p.getName())
+                        .setCode(p.getRegCode())
+                        .setPaymentType(p.getPaymentMethod() != null ? p.getPaymentMethod().getCode() : null)
+                        .setInfo(p.getInfo());
+            }
+        };
     }
 
     private EventEntity getEventEntity(UUID eventId) {
