@@ -15,6 +15,24 @@ function App() {
   const [jPCode, setJPCode] = useState("");
   const [jPMethod, setJPMethod] = useState("");
   const [jPInfo, setJPInfo] = useState("");
+  const [paymentTypes, setPaymentTypes] = useState([]);
+
+  async function loadMethods() {
+    const url = EVENTS_URL + "ptypes";
+    const options = {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+    };
+    fetch(url, options)
+        .then(response => {
+          if (response.ok) {
+            response.json().then(data => {
+              console.log("Payment types", data);
+              setPaymentTypes(data);
+            });
+          }
+        });
+  }
 
   async function loadEvent(id) {
     if (id) {
@@ -77,6 +95,7 @@ function App() {
   }
 
   useEffect(() => {
+    loadMethods();
     console.log("Loading event", searchParams);
     const eventId = searchParams.get("id");
     loadEvent(eventId);
@@ -152,9 +171,11 @@ function App() {
           </tr>
           <tr>
             <td><label for="jpmethod">Maksmisviis:</label></td>
-            <td><input id="jpmethod" name="jpmethod" type="text"
-                value={jPMethod || ""}
-                onChange={e => setJPMethod(e.target.value)} /></td>
+            <td><select id="jpmethod" name="jpmethod"
+                defaultValue={jPMethod}
+                onChange={e => setJPMethod(e.target.value)}>
+              {paymentTypes.map((opt, i) => <option value={opt.code}>{opt.name}</option>)}
+              </select></td>
           </tr>
           <tr>
             <td><label for="jpinfo">Lisainfo:</label></td>
