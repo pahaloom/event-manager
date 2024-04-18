@@ -39,7 +39,7 @@ function App() {
           <td>{event.time}</td>
           <td>{event.place}</td>
           <td>{event.size}</td>
-          <td><Link to={`/participant?id=${eventId}`}>OSAVÕTJAD</Link></td>
+          <td><Link to={`/participants?id=${eventId}`}>OSAVÕTJAD</Link></td>
         </tr>
       );
     });
