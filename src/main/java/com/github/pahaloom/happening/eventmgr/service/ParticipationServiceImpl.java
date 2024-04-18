@@ -40,12 +40,13 @@ public class ParticipationServiceImpl implements ParticipantService {
         }
         return event.get().getParticipants().stream()
                 .map(p -> new EventParticipant()
+                        .setId(p.getId())
                         .setName(p.getName())
                         .setCode(p.getCode())
                         .setType(p.getType()))
                 .sorted(Comparator.comparing(EventParticipant::getType)
-                        .thenComparing(EventParticipant::getCode)
-                        .thenComparing(EventParticipant::getName))
+                        .thenComparing(EventParticipant::getName)
+                        .thenComparing(EventParticipant::getCode))
                 .toList();
     }
 
