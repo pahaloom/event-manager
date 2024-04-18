@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { EVENTS_URL } from "../constants";
 
 
 function App() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [event, setEvent] = useState(null);
   const [name, setName] = useState("");
@@ -39,11 +40,11 @@ function App() {
     loadEvent(searchParams.get("id"));
   }, []);
 
-  const handleSubmit = event => {
-    event.preventDefault();
-    const url = EVENTS_URL + "events";
+  const handleSubmit = e => {
+    e.preventDefault();
+    const url = EVENTS_URL + ((event) ? "events/" + event.id : "events");
     const options = {
-        method: "POST",
+        method: event ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             "name": name,
@@ -55,9 +56,14 @@ function App() {
     fetch(url, options)
         .then(response => {
           if (response.ok) {
-            response.json().then(id => {
-              console.log("Created event " + id);
-            });
+            if (event) {
+              console.log("Updated event" + event.id);
+            } else {
+              response.json().then(id => {
+                console.log("Created event " + id);
+                navigate("/");
+              });
+             }
           } else {
             console.log("Error creating event", response);
           }
@@ -65,9 +71,14 @@ function App() {
         .catch(error => console.log("Failed creating event", error));
   }
 
+  const handleBackNav = e => {
+    e.preventDefault();
+    navigate("/");
+  }
+
   return (
     <div>
-      <h2>Event</h2>
+      <h2>{event ? "Ürituse muutmine" : "Ürituse lisamine"}</h2>
       <form onSubmit={handleSubmit}>
         <table class="form">
           <tr>
@@ -112,7 +123,7 @@ function App() {
           </tr>
           <tr>
             <td colSpan="2">
-              <button>Tagasi</button> <input type="submit" value="Lisa" />
+              <button onClick={handleBackNav}>Tagasi</button> <input type="submit" value={event ? "Muuda" : "Lisa"} />
             </td>
           </tr>
         </table>

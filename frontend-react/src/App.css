@@ -1,5 +1,5 @@
 .App {
-  text-align: center;
+  text-align: left;
 }
 
 .App-logo {
@@ -44,4 +44,11 @@
 .flex-container {
   display: flex;
   flex-direction: row;
+  margin: 2px;
+  padding: 2px;
+}
+
+.flex-container > table {
+  border: 1px solid;
+  margin: 2px;
 }

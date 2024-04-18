@@ -64,6 +64,7 @@ function App() {
         <EventList title="Tulevased üritused" events={futureEvents} />
         <EventList title="Toimunud üritused" events={pastEvents} />
       </div>
+      <Link to="/event">LISA ÜRITUS</Link>
     </div>
   );
 }
