@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { EVENTS_URL } from "../constants";
+import { Link } from "react-router-dom";
 
 
 function App() {
@@ -31,19 +32,21 @@ function App() {
     console.log("EventList", title, events);
     const rows = [];
     events.forEach((event) => {
+      const eventId = event.id;
       rows.push(
         <tr key={event.id}>
           <td>{event.name}</td>
           <td>{event.time}</td>
           <td>{event.place}</td>
           <td>{event.size}</td>
+          <td><Link to={`/event?id=${eventId}`}>OSAVÕTJAD</Link></td>
         </tr>
       );
     });
     return (
       <table>
         <thead>
-          <tr colSpan="4">
+          <tr colSpan="5">
             <th>{title}</th>
           </tr>
         </thead>

@@ -1,12 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { EVENTS_URL } from "../constants";
 
 
 function App() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [event, setEvent] = useState(null);
   const [name, setName] = useState("");
   const [time, setTime] = useState("");
   const [place, setPlace] = useState("");
   const [info, setInfo] = useState("");
+
+  async function loadEvent(id) {
+    if (id) {
+      const url = EVENTS_URL + "events/" + id;
+      console.log("Fetching event", url);
+      const options = {
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+      }
+      fetch(url, options)
+          .then(response => {
+            if (response.ok) {
+              response.json().then(data => {
+                setEvent(data);
+                setName(data.name);
+                setTime(data.time);
+                setPlace(data.place);
+                setInfo(data.info);
+              })
+            }
+          })
+    }
+  }
+
+  useEffect(() => {
+    console.log("Loading event", searchParams);
+    loadEvent(searchParams.get("id"));
+  }, []);
 
   const handleSubmit = event => {
     event.preventDefault();
