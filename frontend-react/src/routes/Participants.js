@@ -10,18 +10,7 @@ function App() {
   const [eventTime, setEventTime] = useState("");
   const [eventPlace, setEventPlace] = useState("");
   const [participants, setParticipants] = useState(null);
-  const [pPFirstName, setPPFirstName] = useState("");
-  const [pPLastName, setPPLastName] = useState("");
-  const [pPCode, setPPCode] = useState("");
-  const [pPMethod, setPPMethod] = useState("");
-  const [pPInfo, setPPInfo] = useState("");
-  const [jPName, setJPName] = useState("");
-  const [jPCode, setJPCode] = useState("");
-  const [jPCount, setJPCount] = useState(1);
-  const [jPMethod, setJPMethod] = useState("");
-  const [jPInfo, setJPInfo] = useState("");
   const [paymentTypes, setPaymentTypes] = useState([]);
-  const [selectedPersonType, setSelectedPersonType] = useState("PHYSICAL");
 
   async function loadMethods() {
     const url = EVENTS_URL + "ptypes";
@@ -108,47 +97,65 @@ function App() {
     loadParticipants(eventId);
   }, []);
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    const data = selectedPersonType === "LEGAL"
-        ? {
-          type: "LEGAL",
-          name: jPName,
-          code: jPCode,
-          count: jPCount,
-          paymentType: jPMethod,
-          info: jPInfo
-        } : {
-          type: "PHYSICAL",
-          firstName: pPFirstName,
-          lastName: pPLastName,
-          code: pPCode,
-          paymentType: pPMethod,
-          info: pPInfo
-        };
-
-    const url = EVENTS_URL + "event/" + event.id + "/participants";
-    const options = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    };
-    fetch(url, options)
-        .then(response => {
-          if (response.ok) {
-            loadParticipants(event.id);
-          }
-        });
+  function ParticipantAddingForm() {
+    const [selectedPersonType, setSelectedPersonType] = useState("PHYSICAL");
+  
+    const handlePersonTypeChange = e => {
+      const type = e.target.value;
+      console.log("Handling person type change", type);
+      setSelectedPersonType(type);
+    }
+  
+    console.log("ParticipantAddingForm", selectedPersonType);
+    return(
+      <>
+      <h2>Osavõtjate lisamine</h2>
+      <label><input type="radio" name="personType" value="PHYSICAL"
+          checked={selectedPersonType === "PHYSICAL"}
+          onChange={handlePersonTypeChange}/>Eraisik</label>
+      <label><input type="radio" name="personType" value="LEGAL"
+          checked={selectedPersonType === "LEGAL"}
+          onChange={handlePersonTypeChange} />Ettevõte</label>
+      <PhysicalForm visible={selectedPersonType === "PHYSICAL"} />
+      <JuridicalForm visible={selectedPersonType === "LEGAL"} />
+      </>
+    );
   }
 
-  const handlePersonTypeChange = e => {
-    const type = e.target.value;
-    console.log("Handling person type change", type);
-    setSelectedPersonType(type);
-  }
+  function PhysicalForm({ visible }) {
+    const [pPFirstName, setPPFirstName] = useState("");
+    const [pPLastName, setPPLastName] = useState("");
+    const [pPCode, setPPCode] = useState("");
+    const [pPMethod, setPPMethod] = useState("TRANSFER");
+    const [pPInfo, setPPInfo] = useState("");
 
-  function PhysicalForm() {
-    if (selectedPersonType === "PHYSICAL") {
+    const handleSubmit = e => {
+      e.preventDefault();
+      const data = {
+        type: "PHYSICAL",
+        firstName: pPFirstName,
+        lastName: pPLastName,
+        code: pPCode,
+        paymentType: pPMethod,
+        info: pPInfo
+      };
+
+      const url = EVENTS_URL + "event/" + event.id + "/participants";
+      const options = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      };
+      fetch(url, options)
+          .then(response => {
+            if (response.ok) {
+              loadParticipants(event.id);
+            }
+          });
+    }
+
+    console.log("PhysicalForm", visible);
+    if (visible) {
       return(
         <form onSubmit={handleSubmit}>
           <table>
@@ -191,8 +198,40 @@ function App() {
     }
   }
 
-  function JuridicalForm() {
-    if (selectedPersonType === "LEGAL") {
+  function JuridicalForm({ visible }) {
+    const [jPName, setJPName] = useState("");
+    const [jPCode, setJPCode] = useState("");
+    const [jPCount, setJPCount] = useState(1);
+    const [jPMethod, setJPMethod] = useState("TRANSFER");
+    const [jPInfo, setJPInfo] = useState("");
+
+    const handleSubmit = e => {
+      e.preventDefault();
+      const data = {
+        type: "LEGAL",
+        name: jPName,
+        code: jPCode,
+        count: jPCount,
+        paymentType: jPMethod,
+        info: jPInfo
+      };
+
+      const url = EVENTS_URL + "event/" + event.id + "/participants";
+      const options = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      };
+      fetch(url, options)
+          .then(response => {
+            if (response.ok) {
+              loadParticipants(event.id);
+            }
+          });
+    }
+
+    console.log("JuridicalForm", visible);
+    if (visible) {
       return(
         <form onSubmit={handleSubmit}>
           <table>
@@ -258,15 +297,7 @@ function App() {
           <Participants participants={participants} />
         </td>
       </table>
-      <h2>Osavõtjate lisamine</h2>
-      <label><input type="radio" name="personType" value="PHYSICAL"
-          checked={selectedPersonType === "PHYSICAL"}
-          onChange={handlePersonTypeChange}/>Eraisik</label>
-      <label><input type="radio" name="personType" value="LEGAL"
-          checked={selectedPersonType === "LEGAL"}
-          onChange={handlePersonTypeChange} />Ettevõte</label>
-      <PhysicalForm />
-      <JuridicalForm />
+      <ParticipantAddingForm />
     </div>
   );
 }
