@@ -7,7 +7,7 @@ public interface EventService {
 
     List<EventResponse> getEvents();
 
-    EventResponse getEvent(UUID eventId);
+    EventDetailsResponse getEvent(UUID eventId);
 
     UUID createEvent(EventRequest event);
 

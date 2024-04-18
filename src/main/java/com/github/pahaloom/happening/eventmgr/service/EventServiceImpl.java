@@ -36,13 +36,13 @@ public class EventServiceImpl implements EventService {
 
     @Transactional
     @Override
-    public EventResponse getEvent(UUID eventId) {
+    public EventDetailsResponse getEvent(UUID eventId) {
         var eventResponse = eventRepository.findById(eventId)
-                .map(EventServiceImpl::mapEventEntityToResponse);
+                .map(EventServiceImpl::mapEventEntityToDetailsResponse);
         if (eventResponse.isEmpty()) {
             throw new IllegalArgumentException("Event not found: " + eventId);
         }
-        return eventResponse.get();
+        return (EventDetailsResponse) eventResponse.get();
     }
 
     @Transactional
@@ -76,8 +76,23 @@ public class EventServiceImpl implements EventService {
                 .setName(ee.getName())
                 .setTime(ee.getTime())
                 .setPlace(ee.getPlace())
-                .setSize(ee.getParticipants().stream()
-                        .mapToInt(ParticipantEntity::getCount)
-                        .sum());
+                .setSize(getParticipantCount(ee));
+    }
+
+    private static Object mapEventEntityToDetailsResponse(EventEntity ee) {
+        var ed = new EventDetailsResponse();
+        ed.setId(ee.getId());
+        ed.setName(ee.getName());
+        ed.setTime(ee.getTime());
+        ed.setPlace(ee.getPlace());
+        ed.setInfo(ee.getInfo());
+        ed.setSize(getParticipantCount(ee));
+        return ed;
+    }
+
+    private static int getParticipantCount(EventEntity ee) {
+        return ee.getParticipants().stream()
+                .mapToInt(ParticipantEntity::getCount)
+                .sum();
     }
 }
