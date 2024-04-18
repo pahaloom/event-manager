@@ -1,7 +1,5 @@
 import { useState } from "react";
-
-const EVENTS_URL = "http://localhost:8080/"
-
+import { EVENTS_URL } from "../constants";
 
 
 function App() {

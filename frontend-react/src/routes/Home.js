@@ -1,7 +1,66 @@
+import { useEffect, useState } from "react";
+import { EVENTS_URL } from "../constants";
+
+
 function App() {
+  const [pastEvents, setPastEvents] = useState([]);
+  const [futureEvents, setFutureEvents] = useState([]);
+
+  async function loadEvents() {
+    const url = EVENTS_URL + "events";
+    const options = {
+        "method": "GET",
+        "Content-Type": "application/json"
+    }
+    fetch(url, options)
+        .then(response => {
+          if (response.ok) {
+            response.json().then((events) => {
+              setFutureEvents(events);
+              setPastEvents(events);
+            });
+          }
+        });
+  }
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  function EventList({ title, events }) {
+    console.log("EventList", title, events);
+    const rows = [];
+    events.forEach((event) => {
+      rows.push(
+        <tr key={event.id}>
+          <td>{event.name}</td>
+          <td>{event.time}</td>
+          <td>{event.place}</td>
+          <td>{event.size}</td>
+        </tr>
+      );
+    });
+    return (
+      <table>
+        <thead>
+          <tr colSpan="4">
+            <th>{title}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows}
+        </tbody>
+     </table>
+    );
+  }
+
   return (
     <div>
-      Home
+      <h2>Home</h2>
+      <div class="flex-container">
+        <EventList title="Tulevased üritused" events={futureEvents} />
+        <EventList title="Toimunud üritused" events={pastEvents} />
+      </div>
     </div>
   );
 }
