@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
-import { EVENTS_URL } from "../constants";
+import { EVENTS_URL, validateIdCode } from "../constants";
 
 function App() {
   const navigate = useNavigate();
@@ -156,9 +156,16 @@ function App() {
     const [pPCode, setPPCode] = useState("");
     const [pPMethod, setPPMethod] = useState("TRANSFER");
     const [pPInfo, setPPInfo] = useState("");
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const handleSubmit = e => {
       e.preventDefault();
+      if (!validateIdCode(pPCode)) {
+        console.log("Invalid personal code: ", pPCode);
+        setErrorMessage("Isikukood ei sobi: " + pPCode);
+        return;
+      }
+
       const data = {
         type: "PHYSICAL",
         firstName: pPFirstName,
@@ -221,6 +228,7 @@ function App() {
             </tr>
           </table>
           <button onClick={handleBackNav}>Tagasi</button> <input type="submit" value="Lisa" />
+          {errorMessage && <div class="error">{errorMessage}</div>}
         </form>
       );
     }

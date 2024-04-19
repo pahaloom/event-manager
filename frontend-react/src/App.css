@@ -112,3 +112,8 @@ div.fcontent {
 div.fcontent > table {
   width: 100%;
 }
+
+div.error {
+  margin: 1em;
+  color: red;
+}
