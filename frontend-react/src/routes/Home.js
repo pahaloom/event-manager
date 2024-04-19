@@ -78,8 +78,8 @@ function App() {
     return (
       <table>
         <thead>
-          <tr colSpan="5">
-            <th>{title}</th>
+          <tr>
+            <th colSpan={hasDelete ? 6 : 5}>{title}</th>
           </tr>
         </thead>
         <tbody>
@@ -90,7 +90,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="content">
       <h2>Home</h2>
       <div class="flex-container">
         <EventList title="Tulevased üritused" hasDelete={true} events={futureEvents} />

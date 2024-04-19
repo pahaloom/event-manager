@@ -77,7 +77,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="content">
       <h2>{event ? "Ürituse muutmine" : "Ürituse lisamine"}</h2>
       <form onSubmit={handleSubmit}>
         <table class="form">

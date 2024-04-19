@@ -1,54 +1,95 @@
 .App {
   text-align: left;
+  width: 80%;
+  padding: 1em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+td.logo {
+  width: 140px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+td.menu {
+  text-align: left;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.menu > ul {
+  margin-left: 40px;
 }
 
-.App-link {
-  color: #61dafb;
+.menu > li {
+  display: inline;
+  padding: 0.7em;
+  color: #ffffff;
+  background-color: #005aa1;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.menu > li > a {
+  color: #ffffff;
+  font-size: 0.7em;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+table.menu {
+  background-color: #ffffff;
+  width: 100%;
+}
+
+div.main {
+  width: 100%;
+  background-color: #ffffff;
+  clear: both;
+}
+
+div.content {
+  margin: 1em;
 }
 
 .form > tr > td {
   text-align: left;
 }
 
-.flex-container {
+div.flex-container {
   display: flex;
   flex-direction: row;
   margin: 2px;
   padding: 2px;
+  min-height: 300px;
 }
 
-.flex-container > table {
-  border: 1px solid;
-  margin: 2px;
+div.flex-container > table {
+  width: 100%;
+  height: auto;
+}
+
+div.flex-container > table > thead > tr {
+  color: #ffffff;
+  background-color: #005aa1;
+}
+
+div.flex-container > table > thead > tr > td {
+  padding: 0.7em;
+}
+
+div.flex-container > table > tbody > tr {
+  color: #828282;
+}
+
+div.footer {
+  width: 100%;
+  background-color: #373737;
+  color: #ffffff;
+}
+
+div.fcontent {
+  width: 100%;
+  padding: 2em;
+}
+
+div.fcontent > table {
+  width: 100%;
 }

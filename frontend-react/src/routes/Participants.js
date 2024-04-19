@@ -303,7 +303,7 @@ function App() {
   }
 
   return(
-    <div>
+    <div className="content">
       <h2>Osavõtjad</h2>
       <table>
         <tr>

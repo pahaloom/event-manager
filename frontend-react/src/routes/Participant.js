@@ -73,17 +73,17 @@ function App() {
   
     console.log("ParticipantAddingForm", selectedPersonType);
     return(
-      <>
-      <h2>Osavõtja info</h2>
-      <label><input type="radio" name="personType" value="PHYSICAL" disabled="true"
-          checked={selectedPersonType === "PHYSICAL"}
-          onChange={handlePersonTypeChange}/>Eraisik</label>
-      <label><input type="radio" name="personType" value="LEGAL" disabled="true"
-          checked={selectedPersonType === "LEGAL"}
-          onChange={handlePersonTypeChange} />Ettevõte</label>
-      <PhysicalForm visible={selectedPersonType === "PHYSICAL"} />
-      <JuridicalForm visible={selectedPersonType === "LEGAL"} />
-      </>
+      <div className="content">
+        <h2>Osavõtja info</h2>
+        <label><input type="radio" name="personType" value="PHYSICAL" disabled="true"
+            checked={selectedPersonType === "PHYSICAL"}
+            onChange={handlePersonTypeChange}/>Eraisik</label>
+        <label><input type="radio" name="personType" value="LEGAL" disabled="true"
+            checked={selectedPersonType === "LEGAL"}
+            onChange={handlePersonTypeChange} />Ettevõte</label>
+        <PhysicalForm visible={selectedPersonType === "PHYSICAL"} />
+        <JuridicalForm visible={selectedPersonType === "LEGAL"} />
+      </div>
     );
   }
 
