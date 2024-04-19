@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { EVENTS_URL } from "../constants";
 import { Link } from "react-router-dom";
+import moment from "moment";
+import { EVENTS_URL } from "../constants";
 
 
 function App() {
@@ -17,8 +18,19 @@ function App() {
         .then(response => {
           if (response.ok) {
             response.json().then((events) => {
-              setFutureEvents(events);
-              setPastEvents(events);
+              const past = [];
+              const future = [];
+              const now = new Date();
+              events.forEach((e) => {
+                const eventDate = moment(e.time, "YYYY-MM-DDThh:mm:ss.SZ").toDate();
+                if (now > eventDate) {
+                  past.push(e);
+                } else {
+                  future.push(e);
+                }
+              });
+              setFutureEvents(future);
+              setPastEvents(past);
             });
           }
         });
