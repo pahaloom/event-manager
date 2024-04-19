@@ -53,6 +53,25 @@ div.content {
   text-align: left;
 }
 
+div.filler {
+  margin-top: 1em;
+  display: flex;
+  align-self: center;
+  align-content: center;
+  vertical-align: middle;
+  color:#ffffff;
+  background-color: #005aa1;
+}
+div.filler > div {
+  margin: 2em;
+  vertical-align: middle;
+}
+
+div.filler > img {
+  float: right;
+  clear: left;
+}
+
 div.flex-container {
   display: flex;
   flex-direction: row;

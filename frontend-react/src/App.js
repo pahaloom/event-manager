@@ -23,6 +23,15 @@ function App() {
             <td><img src="symbol.svg" height="60" width="60" alt="Sümbol" /></td>
           </tr>
         </table>
+        <div className="filler">
+          <div>
+            Sed nec elit vestibulum, <strong>tincidunt orci</strong> et, sagittis
+            ex. Vestibulum rutrum <strong>neque sucipit</strong> ante
+            mattis maximus. Nulla non sapien <strong>viverra,</strong>
+            <strong>lobotis lorem non, </strong> accumsan metus.
+          </div>
+          <img src="pilt.jpg" alt="Tool puu all" />
+        </div>
         <div className='main'>
           <react.Suspense fallback={<>Loading...</>}>
             <Routes>
