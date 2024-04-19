@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest
@@ -50,6 +51,51 @@ public class ParticipantServiceImplTest {
                 .setInfo("Some corporate party"));
 
         Assertions.assertEquals(8, eventService.getEvent(eventId).getSize());
+    }
+
+
+    @Test
+    void deleteEvent_withParticipants() {
+        UUID eId = createEvent();
+        service.addParticipant(eId, new NewParticipantRequest()
+                .setType(ParticipantType.PHYSICAL)
+                .setFirstName("First")
+                .setLastName("Last")
+                .setCode("312423")
+                .setPaymentType("CASH")
+                .setInfo("Some happy guy"));
+        var isDeleted = eventService.removeEvent(eId);
+        Assertions.assertTrue(isDeleted);
+    }
+
+    @Test
+    void removeParticipant() {
+        UUID eId = createEvent();
+        UUID eId2 = createEvent("Second", ZonedDateTime.now().plusDays(1), "Cafeteria", "Big and fun party!");
+        UUID firstId = service.addParticipant(eId, new NewParticipantRequest()
+                .setType(ParticipantType.PHYSICAL)
+                .setFirstName("First")
+                .setLastName("Last")
+                .setCode("525323")
+                .setPaymentType("CASH")
+                .setInfo("First participant"));
+        UUID secondId = service.addParticipant(eId, new NewParticipantRequest()
+                .setType(ParticipantType.PHYSICAL)
+                .setFirstName("Second")
+                .setLastName("Last")
+                .setCode("525324")
+                .setPaymentType("CASH")
+                .setInfo("Second participant"));
+
+        Assertions.assertFalse(service.removeParticipant(eId2, ParticipantType.PHYSICAL, firstId));
+        Assertions.assertTrue(service.removeParticipant(eId, ParticipantType.PHYSICAL, firstId));
+
+        List<EventParticipant> participants = service.getParticipants(eId);
+        Assertions.assertEquals(1, participants.size());
+        Assertions.assertEquals(secondId, participants.getFirst().getId());
+
+        Assertions.assertTrue(service.removeParticipant(eId, ParticipantType.PHYSICAL, secondId));
+        Assertions.assertEquals(0, service.getParticipants(eId).size());
     }
 
     private UUID createEvent(String name, ZonedDateTime time, String place, String info) {

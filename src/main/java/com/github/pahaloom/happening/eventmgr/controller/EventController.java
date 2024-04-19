@@ -36,4 +36,9 @@ public class EventController {
     public void updateEvent(@RequestBody EventRequest request, @PathVariable UUID id) {
         eventService.updateEvent(request, id);
     }
+
+    @DeleteMapping("/events/{id}")
+    public boolean removeEvent(@PathVariable UUID id) {
+        return eventService.removeEvent(id);
+    }
 }

@@ -29,6 +29,13 @@ public class EventServiceImplTest {
         Assertions.assertEquals(0, e.getSize());
     }
 
+    @Test
+    void deleteEvent () {
+        UUID eId = createEvent();
+        var isDeleted = service.removeEvent(eId);
+        Assertions.assertTrue(isDeleted);
+    }
+
     private UUID createEvent(String name, ZonedDateTime time, String place, String info) {
         return service.createEvent(new EventRequest()
                 .setName(name)

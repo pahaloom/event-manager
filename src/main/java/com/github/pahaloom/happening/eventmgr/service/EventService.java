@@ -12,4 +12,6 @@ public interface EventService {
     UUID createEvent(EventRequest event);
 
     void updateEvent(EventRequest event, UUID eventId);
+
+    boolean removeEvent(UUID uuid);
 }

@@ -4,17 +4,12 @@ import com.github.pahaloom.happening.eventmgr.model.dao.EventRepository;
 import com.github.pahaloom.happening.eventmgr.model.dao.ParticipantJuridicalRepository;
 import com.github.pahaloom.happening.eventmgr.model.dao.ParticipantPhysicalRepository;
 import com.github.pahaloom.happening.eventmgr.model.dao.PaymentMethodRepository;
-import com.github.pahaloom.happening.eventmgr.model.en.EventEntity;
-import com.github.pahaloom.happening.eventmgr.model.en.ParticipantJuridicalEntity;
-import com.github.pahaloom.happening.eventmgr.model.en.ParticipantPhysicalEntity;
-import com.github.pahaloom.happening.eventmgr.model.en.PaymentMethodEntity;
+import com.github.pahaloom.happening.eventmgr.model.en.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ParticipationServiceImpl implements ParticipantService {
@@ -31,7 +26,7 @@ public class ParticipationServiceImpl implements ParticipantService {
     @Autowired
     private PaymentMethodRepository paymentMethodRepository;
 
-
+    @Transactional
     @Override
     public List<EventParticipant> getParticipants(UUID eventId) {
         var event = eventRepository.findById(eventId);
@@ -139,6 +134,21 @@ public class ParticipationServiceImpl implements ParticipantService {
                         .setInfo(p.getInfo());
             }
         };
+    }
+
+    @Transactional
+    @Override
+    public boolean removeParticipant(UUID eventId, ParticipantType type, UUID participantId) {
+        Optional<EventEntity> byId = eventRepository.findById(eventId);
+        if (byId.isEmpty()) {
+            return false;
+        }
+        var event = byId.get();
+        boolean retVal = event.getParticipants().removeIf(p -> p.getType() == type && p.getId().equals(participantId));
+        if (retVal) {
+            eventRepository.save(event);
+        }
+        return retVal;
     }
 
     private EventEntity getEventEntity(UUID eventId) {

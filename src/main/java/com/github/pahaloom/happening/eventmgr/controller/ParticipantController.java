@@ -29,6 +29,11 @@ public class ParticipantController {
         return participantService.addParticipant(eventId, type, participantId);
     }
 
+    @DeleteMapping("event/{eventId}/participant/{type}/{participantId}")
+    public boolean removeParticipant(@PathVariable UUID eventId, @PathVariable ParticipantType type, @PathVariable UUID participantId) {
+        return participantService.removeParticipant(eventId, type, participantId);
+    }
+
     @GetMapping("participant/{type}/{participantId}")
     public ParticipantDetails getParticipant(@PathVariable ParticipantType type, @PathVariable UUID participantId) {
         return participantService.getParticipant(type, participantId);

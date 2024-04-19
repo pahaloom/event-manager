@@ -12,4 +12,6 @@ public interface ParticipantService {
     UUID addParticipant(UUID eventId, NewParticipantRequest participant);
 
     ParticipantDetails getParticipant(ParticipantType type, UUID participantId);
+
+    boolean removeParticipant(UUID eventId, ParticipantType type, UUID participantId);
 }

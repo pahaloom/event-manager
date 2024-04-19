@@ -6,10 +6,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -68,6 +65,17 @@ public class EventServiceImpl implements EventService {
                             .setInfo(event.getInfo());
                     return eventRepository.save(eventEntity);
                 }).orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+    }
+
+    @Transactional
+    @Override
+    public boolean removeEvent(UUID uuid) {
+        Optional<EventEntity> byId = eventRepository.findById(uuid);
+        if (byId.isEmpty()) {
+            return false;
+        }
+        eventRepository.delete(byId.get());
+        return true;
     }
 
     private static EventResponse mapEventEntityToResponse(EventEntity ee) {
