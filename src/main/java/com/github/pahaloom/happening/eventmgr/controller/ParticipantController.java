@@ -20,7 +20,7 @@ public class ParticipantController {
     }
 
     @PostMapping("event/{eventId}/participants")
-    public UUID addParticipant(@PathVariable UUID eventId, @RequestBody NewParticipantRequest request) {
+    public UUID addParticipant(@PathVariable UUID eventId, @RequestBody ParticipantRequest request) {
         return participantService.addParticipant(eventId, request);
     }
 
@@ -37,5 +37,10 @@ public class ParticipantController {
     @GetMapping("participant/{type}/{participantId}")
     public ParticipantDetails getParticipant(@PathVariable ParticipantType type, @PathVariable UUID participantId) {
         return participantService.getParticipant(type, participantId);
+    }
+
+    @PutMapping("participant/{type}/{participantId}")
+    public boolean updateParticipant(@PathVariable ParticipantType type, @PathVariable UUID participantId, @RequestBody ParticipantRequest participant) {
+        return participantService.updateParticipant(type, participantId, participant);
     }
 }

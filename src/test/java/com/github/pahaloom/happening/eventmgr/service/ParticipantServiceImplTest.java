@@ -35,14 +35,14 @@ public class ParticipantServiceImplTest {
     void testAddingPeople_correct_count() {
         var eventId = createEvent();
 
-        var someoneId = service.addParticipant(eventId, new NewParticipantRequest()
+        var someoneId = service.addParticipant(eventId, new ParticipantRequest()
                 .setType(ParticipantType.PHYSICAL)
                 .setFirstName("First")
                 .setLastName("Last")
                 .setCode("1234")
                 .setPaymentType("CASH")
                 .setInfo("Some info"));
-        var corpId = service.addParticipant(eventId, new NewParticipantRequest()
+        var corpId = service.addParticipant(eventId, new ParticipantRequest()
                 .setType(ParticipantType.LEGAL)
                 .setName("Test company")
                 .setCount(7)
@@ -57,7 +57,7 @@ public class ParticipantServiceImplTest {
     @Test
     void deleteEvent_withParticipants() {
         UUID eId = createEvent();
-        service.addParticipant(eId, new NewParticipantRequest()
+        service.addParticipant(eId, new ParticipantRequest()
                 .setType(ParticipantType.PHYSICAL)
                 .setFirstName("First")
                 .setLastName("Last")
@@ -72,14 +72,14 @@ public class ParticipantServiceImplTest {
     void removeParticipant() {
         UUID eId = createEvent();
         UUID eId2 = createEvent("Second", ZonedDateTime.now().plusDays(1), "Cafeteria", "Big and fun party!");
-        UUID firstId = service.addParticipant(eId, new NewParticipantRequest()
+        UUID firstId = service.addParticipant(eId, new ParticipantRequest()
                 .setType(ParticipantType.PHYSICAL)
                 .setFirstName("First")
                 .setLastName("Last")
                 .setCode("525323")
                 .setPaymentType("CASH")
                 .setInfo("First participant"));
-        UUID secondId = service.addParticipant(eId, new NewParticipantRequest()
+        UUID secondId = service.addParticipant(eId, new ParticipantRequest()
                 .setType(ParticipantType.PHYSICAL)
                 .setFirstName("Second")
                 .setLastName("Last")

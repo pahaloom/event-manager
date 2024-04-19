@@ -72,7 +72,7 @@ public class ParticipationServiceImpl implements ParticipantService {
 
     @Transactional
     @Override
-    public UUID addParticipant(UUID eventId, NewParticipantRequest participant) {
+    public UUID addParticipant(UUID eventId, ParticipantRequest participant) {
         var eventEntity = getEventEntity(eventId);
         var method = getPaymentMethodEntity(participant.getPaymentType());
         return switch (participant.getType()) {
@@ -112,6 +112,7 @@ public class ParticipationServiceImpl implements ParticipantService {
                 var p = participantPhysical.get();
                 yield new ParticipantDetails()
                         .setId(p.getId())
+                        .setType(p.getType())
                         .setFirstName(p.getFirstName())
                         .setLastName(p.getLastName())
                         .setName(p.getName())
@@ -127,9 +128,11 @@ public class ParticipationServiceImpl implements ParticipantService {
                 var p = participantJuridical.get();
                 yield  new ParticipantDetails()
                         .setId(p.getId())
+                        .setType(p.getType())
                         .setLegalName(p.getJuridicalName())
                         .setName(p.getName())
                         .setCode(p.getRegCode())
+                        .setCount(p.getCount())
                         .setPaymentType(p.getPaymentMethod() != null ? p.getPaymentMethod().getCode() : null)
                         .setInfo(p.getInfo());
             }
@@ -149,6 +152,44 @@ public class ParticipationServiceImpl implements ParticipantService {
             eventRepository.save(event);
         }
         return retVal;
+    }
+
+    @Override
+    public boolean updateParticipant(ParticipantType type, UUID participantId, ParticipantRequest participant) {
+        Optional<PaymentMethodEntity> pmById = paymentMethodRepository.findById(participant.getPaymentType());
+        if (pmById.isEmpty()) {
+            throw new IllegalArgumentException("Payment method not found: " + participant.getPaymentType());
+        }
+        PaymentMethodEntity paymentMethod = pmById.get();
+        return switch (type) {
+            case PHYSICAL -> {
+                Optional<ParticipantPhysicalEntity> byId = participantPhysicalRepository.findById(participantId);
+                if (byId.isEmpty()) {
+                    yield false;
+                }
+                ParticipantPhysicalEntity en = byId.get();
+                en.setFirstName(participant.getFirstName());
+                en.setLastName(participant.getLastName());
+                en.setPersonalCode(participant.getCode());
+                en.setPaymentMethod(paymentMethod);
+                en.setInfo(participant.getInfo());
+                participantPhysicalRepository.save(en);
+                yield true;
+            }
+            case LEGAL -> {
+                Optional<ParticipantJuridicalEntity> byId = participantJuridicalRepository.findById(participantId);
+                if (byId.isEmpty()) {
+                    yield false;
+                }
+                ParticipantJuridicalEntity en = byId.get();
+                en.setJuridicalName(participant.getName());
+                en.setRegCode(participant.getCode());
+                en.setPaymentMethod(paymentMethod);
+                en.setInfo(participant.getInfo());
+                participantJuridicalRepository.save(en);
+                yield true;
+            }
+        };
     }
 
     private EventEntity getEventEntity(UUID eventId) {

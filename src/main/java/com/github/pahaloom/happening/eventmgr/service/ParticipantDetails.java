@@ -28,4 +28,6 @@ public class ParticipantDetails {
     private String paymentType;
 
     private String info;
+
+    private Integer count;
 }

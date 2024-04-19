@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { EVENTS_URL } from "../constants";
+
 
 function App() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [event, setEvent] = useState(null);
-  const [eventName, setEventName] = useState("");
-  const [eventTime, setEventTime] = useState("");
-  const [eventPlace, setEventPlace] = useState("");
-  const [participants, setParticipants] = useState(null);
+  const [eventId, setEventId] = useState(searchParams.get("eventId"));
+  const [personType, setPersonType] = useState(searchParams.get("type"));
+  const [participant, setParticipant] = useState(null);
   const [paymentTypes, setPaymentTypes] = useState([]);
 
   async function loadMethods() {
@@ -29,104 +28,42 @@ function App() {
         });
   }
 
-  async function loadEvent(id) {
+  async function loadParticipant(type, id) {
     if (id) {
-      const eventUrl = EVENTS_URL + "events/" + id;
-      console.log("Fetching event", eventUrl);
+      const url = EVENTS_URL + "participant/" + type + "/" + id;
+      console.log("Fetching participant", url);
       const options = {
           method: "GET",
-          headers: { "Content-Type": "application/json" }
-      }
-      fetch(eventUrl, options)
-          .then(response => {
-            if (response.ok) {
-              response.json().then(data => {
-                setEvent(data);
-                setEventName(data.name);
-                setEventTime(data.time);
-                setEventPlace(data.place);
-              });
-            }
-          });
-    }
-  }
-
-  async function loadParticipants(id) {
-    if (id) {
-      const participantsUrl = EVENTS_URL + "event/" + id + "/participants";
-      const options = {
-          method: "GET",
-          headers: { "Content-Type": "application/json" }
-      }
-      fetch(participantsUrl, options)
-          .then(response => {
-            if (response.ok) {
-              response.json().then(data => {
-                setParticipants(data);
-              });
-            }
-          })
-    }
-  }
-
-  const handleBackNav = e => {
-    e.preventDefault();
-    navigate("/");
-  }
-
-  function Participants({ participants }){
-    const handleDelete = e => {
-      if (!window.confirm("Oled kindel, et soovid osalejat eemaldada?")) {
-        return;
-      }
-        const pId = e.currentTarget.getAttribute("participant-id");
-      const pType = e.currentTarget.getAttribute("participant-type");
-      console.log("Deleting", pId, pType);
-      const url = EVENTS_URL + "event/" + event.id + "/participant/" + pType + "/" + pId;
-      const options = {
-          method: "DELETE",
           headers: { "Content-Type": "application/json" }
       }
       fetch(url, options)
           .then(response => {
             if (response.ok) {
-              loadParticipants(event.id);
+              response.json().then(data => {
+                setParticipant(data);
+                console.log("Loaded person", data);
+                setPersonType(data.type);
+              });
             }
           });
     }
-    if (!participants) {
-      return;
-    }
-    const rows=[];
-    participants.forEach((p) => {
-      rows.push(
-        <tr key={p.id}>
-          <td>{p.name}</td>
-          <td>{p.code}</td>
-          <td><Link to={`/participant?id=${p.id}&type=${p.type}&eventId=${event.id}`}>VAATA</Link></td>
-          <td><button onClick={handleDelete} participant-type={p.type} participant-id={p.id}>
-            <img src="remove.svg" width="20" height="20" alt="Kustuta" />
-            </button></td>
-        </tr>
-      );
-    });
-    return(
-      <table>
-        {rows}
-      </table>
-    );
+  }
+
+  const handleBackNav = e => {
+    e.preventDefault();
+    navigate("/participants?id=" + searchParams.get("eventId"));
   }
 
   useEffect(() => {
     loadMethods();
-    console.log("Loading event", searchParams);
-    const eventId = searchParams.get("id");
-    loadEvent(eventId);
-    loadParticipants(eventId);
+    console.log("Loading participant", searchParams);
+    const participantType = searchParams.get("type");
+    const participantId = searchParams.get("id");
+    loadParticipant(participantType, participantId);
   }, []);
 
-  function ParticipantAddingForm() {
-    const [selectedPersonType, setSelectedPersonType] = useState("PHYSICAL");
+  function ParticipantAddingForm({ person }) {
+    const [selectedPersonType, setSelectedPersonType] = useState(person.type);
   
     const handlePersonTypeChange = e => {
       const type = e.target.value;
@@ -137,11 +74,11 @@ function App() {
     console.log("ParticipantAddingForm", selectedPersonType);
     return(
       <>
-      <h2>Osavõtjate lisamine</h2>
-      <label><input type="radio" name="personType" value="PHYSICAL"
+      <h2>Osavõtja info</h2>
+      <label><input type="radio" name="personType" value="PHYSICAL" disabled="true"
           checked={selectedPersonType === "PHYSICAL"}
           onChange={handlePersonTypeChange}/>Eraisik</label>
-      <label><input type="radio" name="personType" value="LEGAL"
+      <label><input type="radio" name="personType" value="LEGAL" disabled="true"
           checked={selectedPersonType === "LEGAL"}
           onChange={handlePersonTypeChange} />Ettevõte</label>
       <PhysicalForm visible={selectedPersonType === "PHYSICAL"} />
@@ -151,11 +88,11 @@ function App() {
   }
 
   function PhysicalForm({ visible }) {
-    const [pPFirstName, setPPFirstName] = useState("");
-    const [pPLastName, setPPLastName] = useState("");
-    const [pPCode, setPPCode] = useState("");
-    const [pPMethod, setPPMethod] = useState("TRANSFER");
-    const [pPInfo, setPPInfo] = useState("");
+    const [pPFirstName, setPPFirstName] = useState(participant.firstName);
+    const [pPLastName, setPPLastName] = useState(participant.lastName);
+    const [pPCode, setPPCode] = useState(participant.code);
+    const [pPMethod, setPPMethod] = useState(participant.paymentType);
+    const [pPInfo, setPPInfo] = useState(participant.info);
 
     const handleSubmit = e => {
       e.preventDefault();
@@ -168,16 +105,16 @@ function App() {
         info: pPInfo
       };
 
-      const url = EVENTS_URL + "event/" + event.id + "/participants";
+      const url = EVENTS_URL + "participant/" + personType + "/" + searchParams.get('id');
       const options = {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       };
       fetch(url, options)
           .then(response => {
             if (response.ok) {
-              loadParticipants(event.id);
+              loadParticipant(personType, searchParams.get("id"));
             }
           });
     }
@@ -220,18 +157,18 @@ function App() {
                   onChange={e => setPPInfo(e.target.value)} /></td>
             </tr>
           </table>
-          <button onClick={handleBackNav}>Tagasi</button> <input type="submit" value="Lisa" />
+          <button onClick={handleBackNav}>Tagasi</button> <input type="submit" value="Salvesta" />
         </form>
       );
     }
   }
 
   function JuridicalForm({ visible }) {
-    const [jPName, setJPName] = useState("");
-    const [jPCode, setJPCode] = useState("");
-    const [jPCount, setJPCount] = useState(1);
-    const [jPMethod, setJPMethod] = useState("TRANSFER");
-    const [jPInfo, setJPInfo] = useState("");
+    const [jPName, setJPName] = useState(participant.name);
+    const [jPCode, setJPCode] = useState(participant.code);
+    const [jPCount, setJPCount] = useState(participant.count);
+    const [jPMethod, setJPMethod] = useState(participant.paymentType);
+    const [jPInfo, setJPInfo] = useState(participant.info);
 
     const handleSubmit = e => {
       e.preventDefault();
@@ -244,16 +181,16 @@ function App() {
         info: jPInfo
       };
 
-      const url = EVENTS_URL + "event/" + event.id + "/participants";
+      const url = EVENTS_URL + "participant/" + personType + "/" + searchParams.get('id');
       const options = {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       };
       fetch(url, options)
           .then(response => {
             if (response.ok) {
-              loadParticipants(event.id);
+              loadParticipant(personType, searchParams.get("id"));
             }
           });
     }
@@ -296,39 +233,17 @@ function App() {
                   onChange={e => setJPInfo(e.target.value)} /></td>
             </tr>
           </table>
-          <button onClick={handleBackNav}>Tagasi</button> <input type="submit" value="Lisa" />
+          <button onClick={handleBackNav}>Tagasi</button> <input type="submit" value="Salvesta" />
         </form>
       );
     }
   }
 
-  return(
-    <div>
-      <h2>Osavõtjad</h2>
-      <table>
-        <tr>
-          <td>Ürituse nimi:</td>
-          <td>{eventName}</td>
-        </tr>
-        <tr>
-          <td>Toimumisaeg:</td>
-          <td>{eventTime}</td>
-        </tr>
-        <tr>
-          <td>Koht:</td>
-          <td>{eventPlace}</td>
-        </tr>
-        <td>
-          Osavõtjad:
-        </td>
-        <td>
-          <Participants participants={participants} />
-        </td>
-      </table>
-      <ParticipantAddingForm />
-    </div>
-  );
+  if (participant) {
+    return(
+      <ParticipantAddingForm person={participant} />
+    )
+  }
 }
 
 export default App;
-

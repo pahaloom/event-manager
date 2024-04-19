@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @ToString
-public class NewParticipantRequest {
+public class ParticipantRequest {
 
     private ParticipantType type;
 
