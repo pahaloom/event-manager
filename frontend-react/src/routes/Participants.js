@@ -69,7 +69,28 @@ function App() {
     }
   }
 
+  const handleBackNav = e => {
+    e.preventDefault();
+    navigate("/");
+  }
+
   function Participants({ participants }){
+    const handleDelete = e => {
+      const pId = e.currentTarget.getAttribute("participant-id");
+      const pType = e.currentTarget.getAttribute("participant-type");
+      console.log("Deleting", pId, pType);
+      const url = EVENTS_URL + "event/" + event.id + "/participant/" + pType + "/" + pId;
+      const options = {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" }
+      }
+      fetch(url, options)
+          .then(response => {
+            if (response.ok) {
+              loadParticipants(event.id);
+            }
+          });
+    }
     if (!participants) {
       return;
     }
@@ -79,6 +100,9 @@ function App() {
         <tr key={p.id}>
           <td>{p.name}</td>
           <td>{p.code}</td>
+          <td><button onClick={handleDelete} participant-type={p.type} participant-id={p.id}>
+            <img src="remove.svg" width="20" height="20" alt="Kustuta" />
+            </button></td>
         </tr>
       );
     });
@@ -192,7 +216,7 @@ function App() {
                   onChange={e => setPPInfo(e.target.value)} /></td>
             </tr>
           </table>
-          <input type="submit" value="Lisa" />
+          <button onClick={handleBackNav}>Tagasi</button> <input type="submit" value="Lisa" />
         </form>
       );
     }
@@ -268,7 +292,7 @@ function App() {
                   onChange={e => setJPInfo(e.target.value)} /></td>
             </tr>
           </table>
-          <input type="submit" value="Lisa" />
+          <button onClick={handleBackNav}>Tagasi</button> <input type="submit" value="Lisa" />
         </form>
       );
     }

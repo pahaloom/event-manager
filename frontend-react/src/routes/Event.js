@@ -8,7 +8,7 @@ function App() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [event, setEvent] = useState(null);
   const [name, setName] = useState("");
-  const [time, setTime] = useState("");
+  const [time, setTime] = useState(new Date().toISOString());
   const [place, setPlace] = useState("");
   const [info, setInfo] = useState("");
 
