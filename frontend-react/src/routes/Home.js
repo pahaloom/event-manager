@@ -36,11 +36,30 @@ function App() {
         });
   }
 
+  const handleRemove = e=> {
+    const eventId = e.currentTarget.getAttribute("event-id");
+    if (!window.confirm("Oled kindel, et soovid sündmust eemaldada?")) {
+      return;
+    }
+    console.log("Removing event", eventId);
+    const url = EVENTS_URL + "events/" + eventId;
+    const params = {
+      method: "DELETE",
+      Headers: { "Content-Type": "application/json" }
+    }
+    fetch(url, params)
+        .then((response) => {
+          if (response.ok) {
+            loadEvents();
+          }
+        })
+  }
+
   useEffect(() => {
     loadEvents();
   }, []);
 
-  function EventList({ title, events }) {
+  function EventList({ hasDelete, title, events }) {
     console.log("EventList", title, events);
     const rows = [];
     events.forEach((event) => {
@@ -52,6 +71,7 @@ function App() {
           <td>{event.place}</td>
           <td>{event.size}</td>
           <td><Link to={`/participants?id=${eventId}`}>OSAVÕTJAD</Link></td>
+          {hasDelete && <td><button onClick={handleRemove} event-id={event.id}><img src="remove.svg" width="20" height="20" alt="remove" /></button></td>}
         </tr>
       );
     });
@@ -73,8 +93,8 @@ function App() {
     <div>
       <h2>Home</h2>
       <div class="flex-container">
-        <EventList title="Tulevased üritused" events={futureEvents} />
-        <EventList title="Toimunud üritused" events={pastEvents} />
+        <EventList title="Tulevased üritused" hasDelete={true} events={futureEvents} />
+        <EventList title="Toimunud üritused" hasDelete={false} events={pastEvents} />
       </div>
       <Link to="/event">LISA ÜRITUS</Link>
     </div>

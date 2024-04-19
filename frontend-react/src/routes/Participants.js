@@ -76,7 +76,10 @@ function App() {
 
   function Participants({ participants }){
     const handleDelete = e => {
-      const pId = e.currentTarget.getAttribute("participant-id");
+      if (!window.confirm("Oled kindel, et soovid osalejat eemaldada?")) {
+        return;
+      }
+        const pId = e.currentTarget.getAttribute("participant-id");
       const pType = e.currentTarget.getAttribute("participant-type");
       console.log("Deleting", pId, pType);
       const url = EVENTS_URL + "event/" + event.id + "/participant/" + pType + "/" + pId;
