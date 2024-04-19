@@ -66,7 +66,7 @@ function App() {
       const eventId = event.id;
       rows.push(
         <tr key={event.id}>
-          <td>{event.name}</td>
+          <td><Link to={`/event?id=${eventId}`} >{event.name}</Link></td>
           <td>{event.time}</td>
           <td>{event.place}</td>
           <td>{event.size}</td>
